@@ -70,11 +70,9 @@ def jogar():
         print(' ',*range(1,5) )
         for i in range(len(tab)):
             print(i +1,*tab[i])
-        
-        
         #print(guess)
         guess_1 = guess(1)
-        if guess_1[0] -1 in valid and guess_1[1] -1 in valid:
+        if guess_1[0] - 1 in valid and guess_1[1] -1 in valid:
             guess_1[0] -= 1
             guess_1[1] -= 1
             guess_2 = guess(2)
@@ -90,7 +88,7 @@ def jogar():
             sleep(2)
             os.system('cls')
             continue
-
+        
         if guess_1 == guess_2:
             print("Não podes escolher a mesma carta!")
             continue
