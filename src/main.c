@@ -15,7 +15,7 @@ void guess(int round, int guess[]);
 int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **played);
 
 int main()
-{
+{  
     srand(time(NULL));
     int done = 0;
     int tries = 0;
@@ -60,12 +60,10 @@ int main()
     
 
     while(done < SIZE/2){
-
         int guess_1[2] = {0,0};
         int guess_2[2] = {0,0};
 
         print_board(board_hiden);
-
         guess(1,guess_1);
         if(guess_1[0]< ROWS && guess_1[0]>=0 &&guess_1[1]< ROWS && guess_1[1]>=0)
         {
@@ -83,21 +81,21 @@ int main()
             wait_clean(3);
             continue;
         }
-        if(guess_1 == guess_2)
+        if(guess_1[0] == guess_2[0] && guess_1[1] == guess_2[1])
         {
             printf("Nao podes escolher a mesma carta!");
             wait_clean(3);
             continue;
         }
         tries++;
+        wait_clean(2);
         if(verify(guess_1,guess_2,board,board_hiden,played))
         {
             done++;
         }
-        
+        wait_clean(2);
         printf("\n");
     }
-    wait_clean(5);
     printf("PARABENS!!!!");
     free(board);
     free(board_hiden);
@@ -171,7 +169,7 @@ void guess(int round, int guess[])
         if (scanf("%d %d", &guess[0], &guess[1]) != 2) {
             printf("Erro: precisa digitar dois números!\n");
         }
-    }while (guess[0] && guess[1]);
+    }while (!guess[0] || !guess[1]);
     guess[0] = guess[0]-1;
     guess[1] = guess[1]-1;
   
@@ -179,7 +177,7 @@ void guess(int round, int guess[])
 
 int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **played)
 {
-    if(guess_2[0] != 0 && guess_2 [0] != 0 && board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]] && played[guess_1[0]][guess_1[1]] == 0 && played[guess_2[0]][guess_2[1]] == 0)
+    if(guess_2[0] != 0 && guess_2 [0] != 0 && board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]] && played[guess_1[0]][guess_1[1]] == 0 && played[guess_2[0]][guess_2[1]] == 0 )
     {
         board_hiden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
         board_hiden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
