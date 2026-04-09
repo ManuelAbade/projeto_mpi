@@ -19,7 +19,7 @@ def imprimir_tab(lista:list):
         print(i +1,*lista[i])
     
 
-def guess(round) -> list:
+def guess(round: int) -> list:
     while True:
         g = input(f"Escolhe a {round}ª carta (linha coluna): ").split()
         if len(g) == 2 and all(x.isdigit() for x in g):

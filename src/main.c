@@ -6,13 +6,16 @@
 #define ROWS 4
 #define COLS 4
 #define SIZE (ROWS*COLS)
+#define test 1 //Mudar ao entregar para
 
+void test_mensage(char *mensage);
 void wait_clean(unsigned int temp_sec);
 void shuffle(char *array);
 void create_board(char **board,char init[]);
 void print_board(char **lista);
 void guess(int round, int guess[]);
 int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **played);
+void show_first_guess(int guess_1[],char **board,char **board_hiden,int **played);
 
 int main()
 {  
@@ -59,25 +62,26 @@ int main()
     wait_clean(10);
     
 
-    while(done < SIZE/2){
+    while(done <= SIZE/2){
         int guess_1[2] = {0,0};
         int guess_2[2] = {0,0};
 
         print_board(board_hiden);
         guess(1,guess_1);
-        if(guess_1[0]< ROWS && guess_1[0]>=0 &&guess_1[1]< ROWS && guess_1[1]>=0)
+        if(/*guess_1[0]< ROWS && guess_1[0]>=0 &&guess_1[1]< ROWS && guess_1[1]>=0 &&*/ played[guess_1[0]][guess_1[1]] == 0)
         {
             wait_clean(2);
-            verify(guess_1,guess_2,board,board_hiden,played);
+            show_first_guess(guess_1,board,board_hiden,played);
             guess(2,guess_2);
-            if(!(guess_2[0]< ROWS && guess_2[0]>=0 &&guess_2[1]< ROWS && guess_2[1]>=0))
+
+            /*if(!(guess_2[0]< ROWS && guess_2[0]>=0 &&guess_2[1]< ROWS && guess_2[1]>=0))
             {
                 printf("Posicao invalida!");
                 wait_clean(3);
                 continue;
-            }
+            }*/
         }else{
-            printf("Posicao invalida!");
+            printf("Ja jogaste essa posicao!");
             wait_clean(3);
             continue;
         }
@@ -97,6 +101,16 @@ int main()
         printf("\n");
     }
     printf("PARABENS!!!!");
+    for (int i = 0; i < ROWS; i++) {
+        free(board[i]);
+        free(board_hiden[i]);
+        free(played[i]);
+    }
+    for (int i = 0; i < ROWS; i++) {
+        board[i] = NULL;
+        board_hiden[i] = NULL;
+        played[i] =NULL;
+    }
     free(board);
     free(board_hiden);
     free(played);
@@ -107,7 +121,10 @@ int main()
     return 0; 
 }
 
-
+void test_mensage(char *mensage)
+{
+    printf("%s \n",test ?mensage:NULL);
+}
 
 void wait_clean(unsigned int tem_sec){
     Sleep(tem_sec*1000);
@@ -160,24 +177,36 @@ void print_board(char **board)
     }
 }
 
-
 void guess(int round, int guess[])
 {
+    int valid = 0;
     do
     {
         printf(" Escolhe a %dª carta (linha coluna): ",round);
         if (scanf("%d %d", &guess[0], &guess[1]) != 2) {
             printf("Erro: precisa digitar dois números!\n");
+            while(getchar() != '\n'); //limpar o buffer
         }
-    }while (!guess[0] || !guess[1]);
-    guess[0] = guess[0]-1;
-    guess[1] = guess[1]-1;
+        guess[0] -= 1;
+        guess[1] -= 1;
+        
+        if(!(guess[0]< ROWS && guess[0]>=0 &&guess[1]< ROWS && guess[1]>=0))
+        {
+            printf("Posicao fora do tabuleiro!\n");
+            continue;
+        }
+        valid++;
+    }while (!valid);
+    char temp0[10] = {'0','-',' ', guess[0] + '0', '\0'};
+    char temp1[10] = {'1','-',' ', guess[1] + '0', '\0'};
+    test_mensage(temp0);
+    test_mensage(temp1);
   
 }
 
 int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **played)
 {
-    if(guess_2[0] != 0 && guess_2 [0] != 0 && board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]] && played[guess_1[0]][guess_1[1]] == 0 && played[guess_2[0]][guess_2[1]] == 0 )
+    if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]] && played[guess_2[0]][guess_2[1]] == 0 )
     {
         board_hiden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
         board_hiden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
@@ -186,25 +215,6 @@ int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **pla
         played[guess_2[0]][guess_2[1]] +=1;
         printf("Acertaste!");
         return 1;
-    }else if (guess_2[0] == 0 && guess_2 [0] == 0 && played[guess_1[0]][guess_1[1]] == 0)
-    {
-        char **temporary = malloc(ROWS*sizeof(char*));
-        for(int i = 0; i< ROWS; i++){
-            temporary[i] = malloc(COLS*sizeof(char));
-        }
-
-        //Create initial board with * in each position
-        for(int i = 0; i< ROWS; i++){
-            for (int j = 0; j < COLS; j++)
-            {
-                temporary[i][j] = board_hiden[i][j];
-            }
-        }
-        temporary[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        print_board(temporary);
-        free(temporary);
-        temporary = NULL;
-        return 0; 
     }
     else if(played[guess_1[0]][guess_1[1]] == 0 && played[guess_2[0]][guess_2[1]] == 0)
     {
@@ -223,14 +233,40 @@ int verify(int guess_1[],int guess_2[],char **board,char **board_hiden,int **pla
         faild[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
         faild[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
         print_board(faild);
-        printf("Erras-te!");
+        printf("Erraste!");
+        for (int i = 0; i < ROWS; i++) free(faild[i]);
+        for (int i = 0; i < ROWS; i++) faild[i] = NULL;
         free(faild);
         faild = NULL;
         return 0;
 
     }else
     {
-        printf("Nao podes jogar em casas que ja jogas-te!");
+        printf("Nao podes jogar em casas que ja jogaste!");
     }
 }
 
+void show_first_guess(int guess_1[],char **board,char **board_hiden,int **played)
+{
+    if ( played[guess_1[0]][guess_1[1]] == 0)
+    {
+        char **temporary = malloc(ROWS*sizeof(char*));
+        for(int i = 0; i< ROWS; i++){
+            temporary[i] = malloc(COLS*sizeof(char));
+        }
+
+        //Create initial board with * in each position
+        for(int i = 0; i< ROWS; i++){
+            for (int j = 0; j < COLS; j++)
+            {
+                temporary[i][j] = board_hiden[i][j];
+            }
+        }
+        temporary[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+        print_board(temporary);
+        for (int i = 0; i < ROWS; i++) free(temporary[i]);
+        for (int i = 0; i < ROWS; i++) temporary[i] = NULL;
+        free(temporary);
+        temporary = NULL;
+    }
+}
