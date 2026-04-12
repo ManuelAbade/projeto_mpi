@@ -132,7 +132,7 @@ void wait_clean(unsigned int tem_sec){
 }
 
 //Create the Board with suffeled elements
-void create_board(char **board,char *init)
+void create_board(char **board,char init[])
 {   
     shuffle(init);
     for (int i = 0; i < ROWS; i++)
