@@ -30,6 +30,7 @@ Music actual_music;
 int window_w = WINDOW_WIDTH;
 int window_h = WINDOW_HEIGHT;
 
+
 int main(void)
 {  
     #ifdef DEV
@@ -68,7 +69,7 @@ int main(void)
         printf("Load music faild\n");
     }
     
-    ActualScreen screen = HOME_SCREEN;
+    ActualScreen screen = DIFICULTY_1;
     static int last_wind_mode = 0;
 
     static int original_w = WINDOW_WIDTH;
@@ -76,6 +77,7 @@ int main(void)
     static int original_x = 0;
     static int original_y = 0;
     static int current_w, current_h;
+    bool exit_button_can_be_use = false;
     bool settings_open= false;
     bool stop= WindowShouldClose();
     PlayMusicStream(actual_music);
@@ -152,7 +154,7 @@ int main(void)
                     window_w = mon_w;
                     window_h = mon_h;
                 }
-                last_wind_mode = 2;
+                //last_wind_mode = 2;
                 break;
         }
     }
@@ -162,11 +164,20 @@ int main(void)
         switch (screen)
         {
             case HOME_SCREEN:
+                exit_button_can_be_use = true;
                 HomeScreen(&screen, window_h,  window_w, settings_open);
             break;
+            case DIFICULTY_1:
+                exit_button_can_be_use = false;
+                Dificulty1(&screen, window_h,  window_w, settings_open);
+            case DIFICULTY_2:
+                exit_button_can_be_use = false;
+                //Dificulty2(&screen, window_h,  window_w, settings_open);
             case EXIT:
+                if(exit_button_can_be_use)
+                {
                 stop = true;
-                printf("Exit button pressed");
+                printf("Exit button pressed");}
                 break;
         }
         

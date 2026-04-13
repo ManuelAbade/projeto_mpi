@@ -6,7 +6,7 @@
 #define ROWS 4
 #define COLS 4
 #define SIZE (ROWS*COLS)
-#define test 1 //Mudar ao entregar para
+#define test  0//Mudar  para 0 ao entregar
 
 void test_mensage(char *mensage);
 void wait_clean(unsigned int temp_sec);
@@ -21,7 +21,7 @@ int main()
 {  
     srand(time(NULL));
     int done = 0;
-    int tries = 0;
+    //int tries = 0;
     char mtrx[] = {'A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H'};
 
     char **board = malloc(ROWS*sizeof(char*));
@@ -58,8 +58,8 @@ int main()
 
     create_board(board,mtrx);//Set the board with the cards
 
-    print_board(board); //Print the board and show for 5 seconds
-    wait_clean(10);
+    //print_board(board); //Print the board and show for 10 seconds
+    //wait_clean(5);
     
 
     while(done <= SIZE/2){
@@ -70,7 +70,7 @@ int main()
         guess(1,guess_1);
         if(/*guess_1[0]< ROWS && guess_1[0]>=0 &&guess_1[1]< ROWS && guess_1[1]>=0 &&*/ played[guess_1[0]][guess_1[1]] == 0)
         {
-            wait_clean(2);
+            wait_clean(1);
             show_first_guess(guess_1,board,board_hiden,played);
             guess(2,guess_2);
 
@@ -91,8 +91,8 @@ int main()
             wait_clean(3);
             continue;
         }
-        tries++;
-        wait_clean(2);
+        //tries++;
+        wait_clean(1);
         if(verify(guess_1,guess_2,board,board_hiden,played))
         {
             done++;
@@ -123,7 +123,7 @@ int main()
 
 void test_mensage(char *mensage)
 {
-    printf("%s \n",test ?mensage:NULL);
+    if(test)printf("%s \n",mensage);
 }
 
 void wait_clean(unsigned int tem_sec){

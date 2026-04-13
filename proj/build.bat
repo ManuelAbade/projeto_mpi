@@ -11,7 +11,7 @@ cd /d "%~dp0"
 REM ============================================
 REM CONFIGURACAO DO AMBIENTE
 REM ============================================
-set AMBIENTE=2
+set AMBIENTE=1
 
 if "%AMBIENTE%"=="1" (
     set RAYLIB_PATH=C:/raylib

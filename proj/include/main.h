@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "settings.h"
 #include "home_screen.h"
+#include "dificulty_1.h"
 #include "load.h"
 #include "console_utils.h"
 #include "slide_bar.h" 

@@ -26,12 +26,12 @@ bool SetMenu( bool *setting_old_open_state, int window_w, int window_h){
         Rectangle set_but =(Rectangle){
                 window_w-60*ratio_w,
                 15*ratio_h,
-                SETTINGS_MENU_BUTTON_RADIUS*2,
-                SETTINGS_MENU_BUTTON_RADIUS*2,
+                SETTINGS_MENU_BUTTON_RADIUS*2*ratio_w,
+                SETTINGS_MENU_BUTTON_RADIUS*2*ratio_h,
         };
         Circle settings= {
-                set_but.x+SETTINGS_MENU_BUTTON_RADIUS,
-                set_but.y+SETTINGS_MENU_BUTTON_RADIUS,
+                set_but.x+SETTINGS_MENU_BUTTON_RADIUS*ratio_w,
+                set_but.y+SETTINGS_MENU_BUTTON_RADIUS*ratio_h,
                 SETTINGS_MENU_BUTTON_RADIUS,
                 GRAY
         };    
@@ -72,8 +72,8 @@ bool SetMenu( bool *setting_old_open_state, int window_w, int window_h){
             window_w*2.0f/3.0f,
             window_h
         };
-        
-        float close_but_x = window_rect.x + window_rect.width*11.0f/12.0f-3.0f/2.0f*SETTINGS_MENU_BUTTON_RADIUS*2.0f/3.0f;
+        //DrawRectangleRec(window_rect,YELLOW);
+        float close_but_x = window_rect.x + window_rect.width*11.0f/12.0f-SETTINGS_MENU_BUTTON_RADIUS;
         float close_but_y = window_h/(9.0f*ratio_h)-5.0f/4.0f*SETTINGS_MENU_BUTTON_RADIUS*2.0f/3.0f;
         
         Rectangle close_settings = (Rectangle){
@@ -88,7 +88,7 @@ bool SetMenu( bool *setting_old_open_state, int window_w, int window_h){
                 (Rectangle){
                     banners.width/3+25,
                     3,
-                    banners.width/6-10,
+                    banners.width/6-11,
                     banners.height/7-10,
                 },
                 window_rect,
@@ -121,8 +121,8 @@ bool SetMenu( bool *setting_old_open_state, int window_w, int window_h){
         Vector2 title_size = MeasureTextEx(actual_font, title, title_font_size, ratio_w);
         
 
-        //float board_distance = window_rect.y+(window_rect.width+17.5)/5;
-        float board_distance = window_rect.y + window_rect.height / 5.0f;
+        float board_distance = window_rect.y+(window_rect.width+17.5)/5;
+        //float board_distance = window_rect.y + window_rect.height / 5.0f;
         DrawTextEx(
             actual_font,
             title,
@@ -132,63 +132,64 @@ bool SetMenu( bool *setting_old_open_state, int window_w, int window_h){
             1*ratio_w,
             BLACK
         );
+        /*
+        float settings_rect_init_w = window_rect.x+1.5*board_distance/2;
+        float settings_rect_final_w = settings_rect_init_w +window_rect.width*42/43-1.5*board_distance;
 
-        /*// float settings_rect_init_w = window_rect.x+1.5*board_distance/2;
-        // float settings_rect_fina_w = settings_rect_init_w +window_rect.width*42/43-1.5*board_distance;
-
-        // float settings_rect_init_h = (board_distance+(15*ratio_h))*(6.0f/5.0f*ratio_h);
-        // float settings_rect_final_h = (settings_rect_init_h + window_rect.height-2*board_distance)*(8.0f/9.0f*ratio_h);
+        float settings_rect_init_h = (board_distance+(15*ratio_h))*(6.0f/5.0f*ratio_h);
+        float settings_rect_final_h = (settings_rect_init_h + window_rect.height-2*board_distance)*(8.0f/9.0f*ratio_h);
 
         
-        // float space = (10.0f*ratio_h);
-        // float space_btw_rect = space*ratio_h;
-        // float rect_h = (settings_rect_final_h-settings_rect_init_h-3.0f*space_btw_rect)/4.0f;
+        float space = (10.0f*ratio_h);
+        float space_btw_rect = space*ratio_h;
+        float rect_h = (settings_rect_final_h-settings_rect_init_h-3.0f*space_btw_rect)/4.0f;
 
-        // float actual_rec_y = settings_rect_init_h-space_btw_rect;
-
-        // Rectangle Sets_rect[4];
-        
-        
-        // for(int i = 0; i< 4; i++)
-        //         {
-        //             actual_rec_y += space_btw_rect; 
-        //             Sets_rect[i] = (Rectangle){
-        //                 settings_rect_init_w,
-        //                 actual_rec_y+rect_h*i,
-        //                 settings_rect_fina_w-settings_rect_init_w,
-        //                 rect_h};
-                    
-        //         }
-        // float space = 10.0f * ratio_h;
-        // float space_btw_rect = space;*/
-        
-        float space = 10.0f * ratio_h;
-
-        float settings_rect_init_w = window_rect.x + 20;        
-        float settings_rect_final_w = window_rect.x + window_rect.width - 20;
-
-        float settings_rect_init_h = board_distance + 15;       
-        float settings_rect_final_h = settings_rect_init_h + window_rect.height - 2 * board_distance;
-
-        float space_btw_rect = 10;                              
-
-        float rect_h = (settings_rect_final_h - settings_rect_init_h - 3.0f * space_btw_rect) / 4.0f;
-    
+        float actual_rec_y = settings_rect_init_h-space_btw_rect;
 
         Rectangle Sets_rect[4];
+        
+        
+        for(int i = 0; i< 4; i++)
+                {
+                    actual_rec_y += space_btw_rect; 
+                    Sets_rect[i] = (Rectangle){
+                        settings_rect_init_w,
+                        actual_rec_y+rect_h*i,
+                        settings_rect_final_w-settings_rect_init_w,
+                        rect_h};
+                    
+                }
+        
+        */
+        
+        
+        float settings_rect_init_w = window_rect.x+1.5*board_distance/2;
+        float settings_rect_final_w = settings_rect_init_w +window_rect.width*42/43-1.5*board_distance;
 
-        float actual_rec_y = settings_rect_init_h - space_btw_rect;
+        float settings_rect_init_h = (board_distance+(15*ratio_h))*(6.0f/5.0f);
+        float settings_rect_final_h = (settings_rect_init_h + window_rect.height-2*board_distance)*(8.0f/9.0f);
 
-        for (int i = 0; i < 4; i++)
-        {
-            actual_rec_y += space_btw_rect;
-            Sets_rect[i] = (Rectangle){
-                settings_rect_init_w,
-                actual_rec_y + rect_h * i,
-                settings_rect_final_w - settings_rect_init_w,
-                rect_h
-            };
-        }
+        
+        float space = (10.0f*ratio_h);
+        float space_btw_rect = space;
+        float rect_h = (settings_rect_final_h-settings_rect_init_h-3.0f*space_btw_rect)/4.0f;
+
+        float actual_rec_y = settings_rect_init_h-space_btw_rect;
+
+        Rectangle Sets_rect[4];
+        
+        
+        for(int i = 0; i< 4; i++)
+                {
+                    actual_rec_y += space_btw_rect; 
+                    Sets_rect[i] = (Rectangle){
+                        settings_rect_init_w,
+                        actual_rec_y+rect_h*i,
+                        settings_rect_final_w-settings_rect_init_w,
+                        rect_h};
+                    
+                }
+       
         
         printf("window_h: %d, window_w: %d\n", window_h, window_w);
         printf("Sets_rect[0].y: %f, Sets_rect[3].y: %f\n", Sets_rect[0].y, Sets_rect[3].y);
