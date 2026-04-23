@@ -29,6 +29,8 @@ Font actual_font;
 Music actual_music;
 int window_w = WINDOW_WIDTH;
 int window_h = WINDOW_HEIGHT;
+int dificulty = 0;
+int size = 0;
 
 
 int main(void)
@@ -69,7 +71,7 @@ int main(void)
         printf("Load music faild\n");
     }
     
-    ActualScreen screen = DIFICULTY_1;
+    ActualScreen screen = HOME_SCREEN;
     static int last_wind_mode = 0;
 
     static int original_w = WINDOW_WIDTH;
@@ -77,7 +79,7 @@ int main(void)
     static int original_x = 0;
     static int original_y = 0;
     static int current_w, current_h;
-    bool exit_button_can_be_use = false;
+    bool exit_button_can_be_use = true;
     bool settings_open= false;
     bool stop= WindowShouldClose();
     PlayMusicStream(actual_music);
@@ -172,7 +174,7 @@ int main(void)
                 Dificulty1(&screen, window_h,  window_w, settings_open);
             case DIFICULTY_2:
                 exit_button_can_be_use = false;
-                //Dificulty2(&screen, window_h,  window_w, settings_open);
+                Dificulty2(&screen, window_h,  window_w, settings_open);
             case EXIT:
                 if(exit_button_can_be_use)
                 {

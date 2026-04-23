@@ -1,5 +1,5 @@
-#ifndef DIFICULTY_1_H
-#define DIFICULTY_1_H
+#ifndef DIFICULTY_2_H
+#define DIFICULTY_2_H
 
 
 #include <stdbool.h>
@@ -12,6 +12,6 @@ extern int dificulty;
 extern int size;
 
 
-void Dificulty1(ActualScreen *screen, int window_h, int window_w, bool settings_open);
+void Dificulty2(ActualScreen *screen, int window_h, int window_w, bool settings_open);
 
 #endif
