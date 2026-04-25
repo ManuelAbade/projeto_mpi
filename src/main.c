@@ -7,41 +7,43 @@
 #define COLS 4
 #define SIZE (ROWS*COLS)
 //#define LIFE 4
-#define test  0 // 0 -> Entrega; Outro -> Teste
+#define TEST  0 // 0 -> Entrega; Outro -> Teste
 
-void test_mensage(char mensage[]);
+void test_message(char message[]);
 void wait_clean(unsigned int temp_sec);
 void shuffle(char array[SIZE]);
 void create_board(char board[ROWS][COLS],char init[]);
-void print_board(char lista[ROWS][COLS]);
+void print_board(char board[ROWS][COLS]);
 //void guess(int round, int guess[],int *life);
 void guess(int round, int guess[]);
-//int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS],int *life);
-int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS]);
-void show_first_guess(int guess_1[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS]);
+//int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life);
+int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hidden[ROWS][COLS]);
+
 
 int main()
 {  
     srand(time(NULL));
-    int done = 0;
-    char mtrx[] = {'A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H'};
+    int done = 0; 
+    int moves = 0; 
+    char array[] = {'A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H'};
     //int life = LIFE;
     char board[ROWS][COLS];
-    char board_hiden[ROWS][COLS];
-    int played[ROWS][COLS];
+    char board_hidden[ROWS][COLS];
+  
     
-    create_board(board,mtrx);//Set the board with the cards
+    create_board(board,array);
 
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
-            board_hiden[i][j] = '*';
-            played[i][j] = 0;
+            board_hidden[i][j] = '*';
+
         }
     }
 
     //while(done < SIZE/2 && life != 0)
     while(done < SIZE/2)
     {
+        
         int guess_1[2] = {0,0};
         int guess_2[2] = {0,0};
         // printf("VIDA: ");
@@ -50,10 +52,10 @@ int main()
         //     printf("# ");
         // }
         // printf("\n");
-        print_board(board_hiden);
+        print_board(board_hidden);
         //guess(1,guess_1,&life);
         guess(1,guess_1);
-        if( played[guess_1[0]][guess_1[1]] == 0)
+        if(board_hidden[guess_1[0]][guess_1[1]] == '*')
         {
             wait_clean(1);
             // printf("VIDA: ");
@@ -62,11 +64,18 @@ int main()
             //     printf("# ");
             // }
             //printf("\n");
-            show_first_guess(guess_1,board,board_hiden,played);
+            board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+            print_board(board_hidden);
             //guess(2,guess_2,&life);
             guess(2,guess_2);
-
-            
+            if(board_hidden[guess_2[0]][guess_2[1]] != '*')
+            {
+                printf("Nao podes jogar em casas que ja jogaste!");
+                board_hidden[guess_1[0]][guess_1[1]] = '*';
+                //(*life)--;
+                wait_clean(3);
+                continue;
+            }
         }else{
             printf("Ja jogaste essa posicao!");
             //life--;
@@ -82,31 +91,35 @@ int main()
         }
         
         wait_clean(1);
-        //if(verify(guess_1,guess_2,board,board_hiden,played,&life))
-        if(verify(guess_1,guess_2,board,board_hiden,played))
+        //if(verify(guess_1,guess_2,board,board_hiden,&life))
+        if(verify(guess_1,guess_2,board,board_hidden))
         {
+            printf("ACERTASTE!!!");
             done++;
         }
+        moves++;
         wait_clean(2);
         printf("\n");
     }
     // if(life != 0)printf("PARABENS!!!!");
     //else printf("Perdeste!!!!");
-    printf("PARABENS!!!!");
+    printf("PARABENS!!!!\n");
+    printf("Realizou %d jogadas válidas.\n", moves);
     return 0; 
 }
 
-void test_mensage(char mensage[])
+
+void test_message(char message[])
 {
-    if(test)printf("%s \n",mensage);
+    if(TEST)printf("%s \n",message);
 }
 
-void wait_clean(unsigned int tem_sec){
-    Sleep(tem_sec*1000);
+void wait_clean(unsigned int temp_sec){
+    Sleep(temp_sec*1000);
     system("cls");
 }
 
-//Create the Board with suffeled elements
+// Create the board with shuffled elements
 void create_board(char board[ROWS][COLS],char init[])
 {   
     shuffle(init);
@@ -122,7 +135,6 @@ void create_board(char board[ROWS][COLS],char init[])
 //Fisher-Yates Shuffle
 void shuffle(char array[SIZE])
 {
-    
     for(int i = 0; i<SIZE; i++)
     {
         unsigned int j = rand() % (SIZE-i) + i;
@@ -135,7 +147,7 @@ void shuffle(char array[SIZE])
 //Print Board
 void print_board(char board[ROWS][COLS])
 {   
-    printf("%2.c",' ');
+    printf("  ");
     for (int i = 1; i <= ROWS; i++)
     {
         printf("%d ",i);
@@ -158,7 +170,7 @@ void guess(int round, int guess[])
     int valid = 0;
     do
     {
-        printf(" Escolhe a %dª carta (linha coluna): ",round);
+        printf("Escolhe a %dª carta (linha coluna): ", round);
         if (scanf("%d %d", &guess[0], &guess[1]) != 2) {
             printf("Erro: precisa digitar dois números!\n");
             while(getchar() != '\n'); //limpar o buffer
@@ -176,65 +188,35 @@ void guess(int round, int guess[])
     }while (!valid);
     char temp0[10] = {'0','-',' ', guess[0] + '0', '\0'};
     char temp1[10] = {'1','-',' ', guess[1] + '0', '\0'};
-    test_mensage(temp0);
-    test_mensage(temp1);
+    test_message(temp0);
+    test_message(temp1);
   
 }
 
-//int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS],int *life)
-int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS])
+//int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life)
+int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hidden[ROWS][COLS])
 {
-    if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]] && played[guess_2[0]][guess_2[1]] == 0 )
+    if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]])
     {
-        board_hiden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        board_hiden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
-        print_board(board_hiden);
-        played[guess_1[0]][guess_1[1]] = 1;
-        played[guess_2[0]][guess_2[1]] = 1;
-        printf("Acertaste!\n");
+        board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+        board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
+        print_board(board_hidden);
         // if(*life != LIFE){
         //     printf("+1 Vida");
         //     (*life)++;
         // }
         return 1;
     }
-    else if(played[guess_1[0]][guess_1[1]] == 0 && played[guess_2[0]][guess_2[1]] == 0)
+    else 
     {
-        char faild[ROWS][COLS];
-        //Create initial board with * in each position
-        for(int i = 0; i< ROWS; i++){
-            for (int j = 0; j < COLS; j++)
-            {
-                faild[i][j] = board_hiden[i][j];
-            }
-        }
-        faild[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        faild[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
-        print_board(faild);
+        board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+        board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
+        print_board(board_hidden);
         printf("Erraste!");
-        //(*life)--;
-        return 0;
-
-    }else
-    {
-        printf("Nao podes jogar em casas que ja jogaste!");
+        board_hidden[guess_1[0]][guess_1[1]] = '*';
+        board_hidden[guess_2[0]][guess_2[1]] = '*';
         //(*life)--;
         return 0;
     }
 }
 
-void show_first_guess(int guess_1[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int played[ROWS][COLS])
-{
-    if ( played[guess_1[0]][guess_1[1]] == 0)
-    {
-        char temporary[ROWS][COLS];
-        for(int i = 0; i< ROWS; i++){
-            for (int j = 0; j < COLS; j++)
-            {
-                temporary[i][j] = board_hiden[i][j];
-            }
-        }
-        temporary[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        print_board(temporary);
-    }
-}
