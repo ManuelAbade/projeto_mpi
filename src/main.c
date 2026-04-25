@@ -16,9 +16,6 @@ void create_board(char board[ROWS][COLS],char init[]);
 void print_board(char board[ROWS][COLS]);
 //void guess(int round, int guess[],int *life);
 void guess(int round, int guess[]);
-//int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life);
-int verify(int guess_1[],int guess_2[],char board[ROWS][COLS]);
-
 
 int main()
 {  
@@ -82,17 +79,10 @@ int main()
             wait_clean(3);
             continue;
         }
-        if(guess_1[0] == guess_2[0] && guess_1[1] == guess_2[1])
-        {
-            printf("Nao podes escolher a mesma carta!");
-            //life--;
-            wait_clean(3);
-            continue;
-        }
-        
+
         wait_clean(1);
         //if(verify(guess_1,guess_2,board,board_hiden,&life))
-        if(verify(guess_1,guess_2,board,board_hidden))
+        if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]])
         {
             board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
             board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
@@ -205,21 +195,5 @@ void guess(int round, int guess[])
   
 }
 
-//int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life)
-int verify(int guess_1[],int guess_2[], char board[ROWS][COLS])
-{
-    if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]])
-    {
-        // if(*life != LIFE){
-        //     printf("+1 Vida");
-        //     (*life)++;
-        // }
-        return 1;
-    }
-    else 
-    {
-        //(*life)--;
-        return 0;
-    }
-}
+
 
