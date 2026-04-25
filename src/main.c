@@ -17,7 +17,7 @@ void print_board(char board[ROWS][COLS]);
 //void guess(int round, int guess[],int *life);
 void guess(int round, int guess[]);
 //int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life);
-int verify(int guess_1[],int guess_2[],char board[ROWS][COLS],char board_hidden[ROWS][COLS]);
+int verify(int guess_1[],int guess_2[],char board[ROWS][COLS]);
 
 
 int main()
@@ -94,9 +94,21 @@ int main()
         //if(verify(guess_1,guess_2,board,board_hiden,&life))
         if(verify(guess_1,guess_2,board,board_hidden))
         {
+            board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+            board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
+            print_board(board_hidden);
             printf("ACERTASTE!!!");
             done++;
+        }else
+        {
+            board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
+            board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
+            print_board(board_hidden);
+            board_hidden[guess_1[0]][guess_1[1]] = '*';
+            board_hidden[guess_2[0]][guess_2[1]] = '*';
+            printf("ERRASTE!");
         }
+        
         moves++;
         wait_clean(2);
         printf("\n");
@@ -186,21 +198,18 @@ void guess(int round, int guess[])
         }
         valid = 1;
     }while (!valid);
-    char temp0[10] = {'0','-',' ', guess[0] + '0', '\0'};
-    char temp1[10] = {'1','-',' ', guess[1] + '0', '\0'};
+    char temp0[] = {'0','-',' ', guess[0] + '0', '\0'};
+    char temp1[] = {'1','-',' ', guess[1] + '0', '\0'};
     test_message(temp0);
     test_message(temp1);
   
 }
 
 //int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hiden[ROWS][COLS],int *life)
-int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hidden[ROWS][COLS])
+int verify(int guess_1[],int guess_2[], char board[ROWS][COLS])
 {
     if(board[guess_1[0]][guess_1[1]] == board[guess_2[0]][guess_2[1]])
     {
-        board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
-        print_board(board_hidden);
         // if(*life != LIFE){
         //     printf("+1 Vida");
         //     (*life)++;
@@ -209,12 +218,6 @@ int verify(int guess_1[],int guess_2[], char board[ROWS][COLS],char board_hidden
     }
     else 
     {
-        board_hidden[guess_1[0]][guess_1[1]] = board[guess_1[0]][guess_1[1]];
-        board_hidden[guess_2[0]][guess_2[1]] = board[guess_2[0]][guess_2[1]];
-        print_board(board_hidden);
-        printf("Erraste!");
-        board_hidden[guess_1[0]][guess_1[1]] = '*';
-        board_hidden[guess_2[0]][guess_2[1]] = '*';
         //(*life)--;
         return 0;
     }
