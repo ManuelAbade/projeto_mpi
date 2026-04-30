@@ -162,8 +162,9 @@ void guess(int round, Guess *guess)
     {
         printf("Escolhe a %dª carta (linha coluna): ", round);//Pede a linha e a coluna separadas por um espaço
         if (scanf("%d %d", &guess->row, &guess->col) != 2) { // verifica que foram introduzidos dois números
-            printf("Erro: precisa digitar dois números!\n");
+            printf("Erro: precisa digitar dois números!\n"); //Se o scanf falhar
             while(getchar() != '\n'); //limpar o buffer
+            continue;
         }
         guess->row -=1; //retira uma unidade a cada pois é introduzido de 1 a ROWS então para servir de indice passa de 0 a ROWS-1
         guess->col -=1;
