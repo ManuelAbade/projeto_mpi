@@ -19,7 +19,7 @@ void Dificulty1(ActualScreen *screen, int window_h, int window_w, bool settings_
         };
     Rectangle card = (Rectangle)
         {
-            window_w-window_w/12,
+            (float)(window_w-window_w/4)/4,
             window_h/4,
             window_w/12,
             window_h/4
@@ -30,14 +30,14 @@ void Dificulty1(ActualScreen *screen, int window_h, int window_w, bool settings_
         /*
         | O O O |
         */
-        DrawTexturePro(banners,banner_rect,(Rectangle){card.x + i*window_w/4 + i*window_w/12+(i+1)*(window_w-window_w/12),card.y,card.width,card.height},(Vector2){0,0},0.0f,WHITE);
+        DrawTexturePro(banners,banner_rect,(Rectangle){i*card.x + i*window_w/4 +i*card.width,card.y,card.width,card.height},(Vector2){0,0},0.0f,WHITE);
         if(rect_button((Rectangle){card.x + i*window_w/4,card.y,card.width,card.height}))
         {
             dificulty = i+1;
             printf("DIFICULTY: %d", dificulty);
         }
     }
-
+    
     for (int i = 0; i < 3; i++)
     {
         DrawTexturePro(banners,banner_rect,(Rectangle){card.x + i*window_w/4,card.y+window_h/3,card.width,card.height},(Vector2){0,0},0.0f,WHITE);

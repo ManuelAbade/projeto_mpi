@@ -30,7 +30,7 @@ void HomeScreen(ActualScreen *screen,int window_h, int window_w, bool settings_o
                 SECOND_BUTTON_H,
                 BUTTON_W,
                 BUTTON_H    
-            },
+            },s
             (Rectangle){
                 //Exit
                 FIRST_BUTTON_W,
@@ -153,27 +153,27 @@ void HomeScreen(ActualScreen *screen,int window_h, int window_w, bool settings_o
                     // );
                    float scale = 1.0f + (5.0f * ratio_h / buttons[i].height); // fator de expansão
 
-DrawTexturePro(
-    button,
-    (Rectangle){0,0,button.width,button.height},
-    (Rectangle){buttons[i].x - (2.5f * ratio_w), 
-                buttons[i].y - (2.5f * ratio_h), 
-                buttons[i].width + (5.0f * ratio_w), 
-                buttons[i].height + (5.0f * ratio_h)},
-    (Vector2){0,0},
-    0.0f,
-    WHITE
-);
+            DrawTexturePro(
+                button,
+                (Rectangle){0,0,button.width,button.height},
+                (Rectangle){buttons[i].x - (2.5f * ratio_w), 
+                            buttons[i].y - (2.5f * ratio_h), 
+                            buttons[i].width + (5.0f * ratio_w), 
+                            buttons[i].height + (5.0f * ratio_h)},
+                (Vector2){0,0},
+                0.0f,
+                WHITE
+            );
 
-float font_size = (buttons[i].height / 2.0f) * scale;
-Vector2 text_size = MeasureTextEx(actual_font, text[i], font_size, ratio_w);
-Vector2 text_pos = {
-    buttons[i].x - (2.5f * ratio_w) + (buttons[i].width + (5.0f * ratio_w) - text_size.x) / 2.0f,
-    buttons[i].y - (2.5f * ratio_h) + (buttons[i].height + (5.0f * ratio_h) - text_size.y) / 3.0f
-};
-DrawTextEx(actual_font, text[i], text_pos, font_size, ratio_w, BLACK);
+            float font_size = (buttons[i].height / 2.0f) * scale;
+            Vector2 text_size = MeasureTextEx(actual_font, text[i], font_size, ratio_w);
+            Vector2 text_pos = {
+                buttons[i].x - (2.5f * ratio_w) + (buttons[i].width + (5.0f * ratio_w) - text_size.x) / 2.0f,
+                buttons[i].y - (2.5f * ratio_h) + (buttons[i].height + (5.0f * ratio_h) - text_size.y) / 3.0f
+            };
+            DrawTextEx(actual_font, text[i], text_pos, font_size, ratio_w, BLACK);
                 }else
-                {
+                {   
                         DrawTexturePro(
                             button,
                             (Rectangle){0,0,button.width,button.height},
