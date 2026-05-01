@@ -168,6 +168,7 @@ void guess(int round, Guess *guess)
         }
         guess->row -=1; //retira uma unidade a cada pois é introduzido de 1 a ROWS então para servir de indice passa de 0 a ROWS-1
         guess->col -=1;
+        while(getchar() != '\n'); //limpar o buffer
         
         if(!(guess->row< ROWS && guess->row>=0 &&guess->col< COLS && guess->col>=0))//Verificação de posição inválida
         {
