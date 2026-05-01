@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <windows.h>
+//Se estiver a compilar no Windows 
+#ifdef _WIN32 
+    #include <windows.h>
+#else
+//Caso seja Mac/Linux
+    #include <unistd.h>
+#endif
 
 #define ROWS 4
 #define COLS 4
@@ -102,8 +108,16 @@ void test_message(char message[])
 }
 
 void wait_clean(unsigned int temp_sec){
-    Sleep(temp_sec*1000);
-    system("cls");
+    
+    #ifdef _WIN32
+        //Para Windows
+        Sleep(temp_sec * 1000);
+        system("cls");
+    #else
+        //Para Mac/Linux
+        sleep(temp_sec);
+        printf("\033[H\033[J");
+    #endif
 }
 
 // Cria o tabuleiro com os elementos baralhados
@@ -182,5 +196,4 @@ void guess(int round, Guess *guess)
     char temp1[] = {'1','-',' ', guess->col + '0', '\0'};
     test_message(temp0);
     test_message(temp1);
-  
 }
