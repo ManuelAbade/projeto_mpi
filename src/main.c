@@ -1,24 +1,27 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
+#include <stdio.h>   // Biblioteca para input/output (printf, scanf)
+#include <time.h>    // Biblioteca para usar time() (seed aleatória)
+#include <stdlib.h>  // Biblioteca para rand(), srand(), system()
+
 //Se estiver a compilar no Windows 
 #ifdef _WIN32 
-    #include <windows.h>
+    #include <windows.h> // Para usar Sleep() e limpar consola
 #else
 //Caso seja Mac/Linux
-    #include <unistd.h>
+    #include <unistd.h> // Para usar sleep()
 #endif
 
-#define ROWS 4
+// Definição do tamanho do tabuleiro
+#define ROWS 4 
 #define COLS 4
-#define SIZE (ROWS*COLS)
-#define TEST  0 // 0 -> Entrega; Outro -> Teste
+#define SIZE (ROWS*COLS) // Total de cartas
+#define TEST  0 // 0 -> modo normal; outro valor ativa mensagens de teste
 
-//Struct jogada
+// Estrutura que representa uma jogada (linha e coluna)
 typedef struct{
     int row,col;
 } Guess;
 
+// Protótipos das funções
 void test_message(char message[]);
 void wait_clean(unsigned int temp_sec);
 void shuffle(char array[SIZE]);
@@ -28,45 +31,55 @@ void guess(int round, Guess *guess);
 
 int main()
 {  
-    srand(time(NULL));
-    int done = 0; 
-    int moves = 0; 
+    srand(time(NULL)); // Inicializa gerador de números aleatórios
+    int done = 0;  // Número de pares encontrados
+    int moves = 0;  // Número de jogadas válidas feitas
     char array[] = {'A','A','B','B','C','C','D','D','E','E','F','F','G','G','H','H'}; //array com os valores a ser baralhados
-    char board[ROWS][COLS]; //Tabuleiro com as cartas (original para comparação);
-    char board_hidden[ROWS][COLS]; //Tabuleiro com * em cada posição exceto naquelas que já foram revelados
+
+    char board[ROWS][COLS]; // Tabuleiro real (valores escondidos)
+    char board_hidden[ROWS][COLS]; // Tabuleiro visível ao jogador
   
+    // Cria o tabuleiro com cartas baralhadas
     create_board(board,array);
 
+    // Inicializa o tabuleiro visível com '*'
     for(int i = 0; i < ROWS; i++){
         for(int j = 0; j < COLS; j++){
             board_hidden[i][j] = '*';
         }
     }
-    
-    while(done < SIZE/2)
+
+    // Ciclo principal do jogo
+    while(done < SIZE/2) // Termina quando todos os pares forem encontrados
     {
         
         Guess guess_1;
         Guess guess_2;
 
-        print_board(board_hidden);
+        print_board(board_hidden); // Mostra o estado atual
       
-        guess(1,&guess_1);//Primeira Jogada
-        if(board_hidden[guess_1.row][guess_1.col] == '*') //Se a posição da primeira jogada ainda não foi jogada (Se ainda está com *)
-        {
-            wait_clean(1); //Espera 1s e limpa o cmd
+        guess(1,&guess_1); // Primeira jogada
 
+        //Verificar se a posição da primeira jogada ainda não foi jogada (Se ainda está com *)
+        if(board_hidden[guess_1.row][guess_1.col] == '*') 
+        {
+            wait_clean(1); // Espera 1 segundo e limpa consola
+
+            // Revela primeira carta
             board_hidden[guess_1.row][guess_1.col] = board[guess_1.row][guess_1.col];
-            print_board(board_hidden);//Imprime o tabuleiro escondido com a primeira jogada
+            print_board(board_hidden);
 
 
             guess(2,&guess_2); //Segunda Jogada
-            if(board_hidden[guess_2.row][guess_2.col] != '*') //Verifica se aquela posição ainda não foi selecionada anteriormente (inclusivamente na primeira jogada)
+
+            //Verificar se aquela posição ainda não foi selecionada anteriormente (inclusivamente na primeira jogada)
+            if(board_hidden[guess_2.row][guess_2.col] != '*') 
             {
                 printf("Nao podes jogar em casas que ja jogaste!");
-                board_hidden[guess_1.row][guess_1.col] = '*'; //Caso a Jogada seja inválida a casa selecionada na sprimeira jogada passa a * denovo
-                wait_clean(3); //Espera 3 segundos e limpa o cmd
-                continue;
+                //Caso a jogada seja inválida a casa selecionada na primeira jogada passa a * 
+                board_hidden[guess_1.row][guess_1.col] = '*'; 
+                wait_clean(3); 
+                continue; // Recomeça a jogada
             }
         }else{
             printf("Ja jogaste essa posicao!"); //Primeira jogada inválida
@@ -75,55 +88,65 @@ int main()
         }
 
         wait_clean(1);
-        if(board[guess_1.row][guess_1.col] == board[guess_2.row][guess_2.col]) // Se as cartas selecionadas forem iguais
+
+        // Verificar se as duas cartas são iguais
+        if(board[guess_1.row][guess_1.col] == board[guess_2.row][guess_2.col])
         {
-            board_hidden[guess_2.row][guess_2.col] = board[guess_2.row][guess_2.col]; //Revela a carta 2 
-            print_board(board_hidden); //Imprime o tabuleiro
+            // Revela definitivamente a segunda carta
+            board_hidden[guess_2.row][guess_2.col] = board[guess_2.row][guess_2.col];
+            print_board(board_hidden);
+
             printf("ACERTASTE!!!");
-            done++;
+            done++; // Incrementa pares encontrados
         }else
         {
-            board_hidden[guess_2.row][guess_2.col] = board[guess_2.row][guess_2.col]; //revela a segunda carta
-            print_board(board_hidden);//Imprime o tabuleiro a mostrar as cartas
-            //Esconde ambas de novo
+            // Revela temporariamente a segunda carta
+            board_hidden[guess_2.row][guess_2.col] = board[guess_2.row][guess_2.col]; 
+            print_board(board_hidden);
+
+            // Volta a esconder ambas
             board_hidden[guess_1.row][guess_1.col] = '*';
             board_hidden[guess_2.row][guess_2.col] = '*';
             printf("ERRASTE!");
         }
         
-        moves++; //caso a jogada seja válida, então conta mais uma
+        moves++; // Conta jogada válida
         wait_clean(2);
         printf("\n");
     }
 
-    printf("PARABENS!!!!\n"); //Mensagem de vitória
-    printf("Realizou %d jogadas válidas.\n", moves); //Mostra o número de jogadas
+    // Mensagem final
+    printf("PARABENS!!!!\n"); 
+    printf("Realizou %d jogadas válidas.\n", moves); 
     return 0; 
 }
 
-
+// Mostra mensagens de teste se TEST estiver ativo
 void test_message(char message[])
 {
     if(TEST)printf("%s \n",message);
 }
 
+// Espera alguns segundos e limpa o ecrã
 void wait_clean(unsigned int temp_sec){
     
     #ifdef _WIN32
         //Para Windows
-        Sleep(temp_sec * 1000);
-        system("cls");
+        Sleep(temp_sec * 1000); // Espera em milissegundos
+        system("cls");          // Limpa consola Windows
     #else
-        //Para Mac/Linux
-        sleep(temp_sec);
-        printf("\033[H\033[J");
+        //Para Mac/Linux 
+        sleep(temp_sec);        // Espera em segundos
+        printf("\033[H\033[J"); // Limpa consola Unix
     #endif
 }
 
 // Cria o tabuleiro com os elementos baralhados
 void create_board(char board[ROWS][COLS],char init[])
 {   
-    shuffle(init);
+    shuffle(init); // Baralha o array inicial
+
+    // Copia para o tabuleiro original
     for (int i = 0; i < ROWS; i++)
     {
         for(int j = 0; j < COLS; j++)
@@ -133,31 +156,36 @@ void create_board(char board[ROWS][COLS],char init[])
     }
 }
 
-//Fisher-Yates Shuffle
+// Algoritmo de Fisher-Yates para baralhar o array
 void shuffle(char array[SIZE])
 {
     for(int i = 0; i<SIZE; i++)
     {
-        unsigned int j = rand() % (SIZE-i) + i;//Dá sempre um número entre o que está a ser baralhado e os seguintes, impedindo que se altere os já escolhidos, por exemplo, na para a posição de indice 2 devolve um número entre 2 e SIZE-1;Ex.: rand() % (SIZE-2) -> 0 a SIZE - 3, +2 -> 2 a SIZE -1 ou seja o 0 e o 1 já estão fixos
+        // Escolhe posição aleatória válida
+        unsigned int j = rand() % (SIZE-i) + i;
+        //Dá sempre um número entre o que está a ser baralhado e os seguintes, impedindo que se altere os elementos anteriores (fixos), por exemplo, na para a posição de indice 2 devolve um número entre 2 e SIZE-1;Ex.: rand() % (SIZE-2) -> 0 a SIZE - 3, +2 -> 2 a SIZE -1 ou seja o 0 e o 1 já estão fixos
 
-        //troca
+        // Troca elementos
         char k = array[i];
         array[i] = array[j];
         array[j] = k;
     }
 }
 
-//Print Board
+// Imprime o tabuleiro formatado
 void print_board(char board[ROWS][COLS])
 {   
     //Imprime tabuleiros, com o número das colunas em cima e o número das linhas no inicio de cada uma
     printf("  ");
+
+    // Imprime números das colunas
     for (int i = 1; i <= ROWS; i++)
     {
         printf("%d ",i);
     }
     printf("\n");
 
+    // Imprime cada linha
     for(int i = 0; i<ROWS; i++)
     {   
         printf("%d ",i+1);
@@ -168,30 +196,38 @@ void print_board(char board[ROWS][COLS])
     }
 }
 
-//void guess(int round, int guess[],int *life)
+// Função para obter uma jogada válida do jogador
 void guess(int round, Guess *guess)
 {
     int valid = 0;
     do
     {
+        // Pedir coordenadas
         printf("Escolhe a %dª carta (linha coluna): ", round);//Pede a linha e a coluna separadas por um espaço
+
+        // Validar input
         if (scanf("%d %d", &guess->row, &guess->col) != 2) { // verifica que foram introduzidos dois números
             printf("Erro: precisa digitar dois números!\n"); //Se o scanf falhar
-            while(getchar() != '\n'); //limpar o buffer
+            while(getchar() != '\n'); // Limpar o buffer 
             continue;
         }
-        guess->row -=1; //retira uma unidade a cada pois é introduzido de 1 a ROWS então para servir de indice passa de 0 a ROWS-1
+        // Ajusta para índice (0-based)
+        guess->row -=1; 
         guess->col -=1;
-        while(getchar() != '\n'); //limpar o buffer
-        
+
+        while(getchar() != '\n'); //limpar o buffer ->Elimina o lixo da consola. 
+        //Ex.: input : 3 3 3 | caso não se limpasse o buffer a jogara atual seria 3 3 e a segunte seria 3 (primeiro número introduzido na jogada seguinte) e depois o segundo elemento afetaria a jogada seguinte e assim por diante.
+
         if(!(guess->row< ROWS && guess->row>=0 &&guess->col< COLS && guess->col>=0))//Verificação de posição inválida
         {
             printf("Posicao fora do tabuleiro!\n");
             continue;
         }
+
         valid = 1;
     }while (!valid);
-    //Mensagem de teste
+    
+    // Mensagens de debug
     char temp0[] = {'0','-',' ', guess->row + '0', '\0'};
     char temp1[] = {'1','-',' ', guess->col + '0', '\0'};
     test_message(temp0);
